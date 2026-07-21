@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CCNA – Principios de Ethernet 802.3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- ░░░ LOADER ░░░ -->
+    <div class="loader" id="loader">
+        <div class="loader__ring"></div>
+        <div class="loader__text">INICIALIZANDO<span class="blink">_</span></div>
+    </div>
+
+    <!-- ░░░ PARTÍCULAS DE FONDO ░░░ -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- ░░░ HERO ░░░ -->
+    <header class="hero" id="top">
+        <div class="hero__scan"></div>
+        <div class="hero__content">
+            <div class="hero__badge">
+                <span class="mono">Por Pamela Ruíz Velasco | TIN | 6to Cuatrimestre</span>
+            </div>
+            <h1 class="hero__title">
+                <span class="line1">PRINCIPIOS DE</span>
+                <span class="line2 glitch" data-text="ETHERNET">ETHERNET</span>
+                <span class="line3">802.3</span>
+            </h1>
+            <p class="hero__sub">Entramado · Estructura de trama · Conmutación · Dominios de colisión</p>
+            <div class="hero__actions">
+                <a href="#mod6" class="btn btn--primary">Módulo 6 ↓</a>
+                <a href="#mod8" class="btn btn--ghost">Módulo 8 ↓</a>
+            </div>
+        </div>
+        <div class="hero__corner hero__corner--tl"></div>
+        <div class="hero__corner hero__corner--tr"></div>
+        <div class="hero__corner hero__corner--bl"></div>
+        <div class="hero__corner hero__corner--br"></div>
+    </header>
+
+    <!-- ░░░ NAV STICKY ░░░ -->
+    <nav class="topnav" id="topnav">
+        <div class="topnav__inner">
+            <span class="topnav__logo mono">CISCO / ETH</span>
+            <button class="burger" id="burger" aria-label="Menú">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="topnav__links" id="navlinks">
+                <li><a href="#s615">6.1.5 Entramado</a></li>
+                <li><a href="#s616">6.1.6 Estructura</a></li>
+                <li><a href="#s617">6.1.7 Campos</a></li>
+                <li><a href="#s81">8.1 Conmutación</a></li>
+                <li><a href="#s82">8.2 Dominios</a></li>
+                <li><a href="#glosario">Glosario</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ░░░ PROGRESS BAR ░░░ -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <main>
+
+        <!-- ╔══════════════════════════════╗ -->
+        <!-- ║   MÓDULO 6 – INTRO BAND      ║ -->
+        <!-- ╚══════════════════════════════╝ -->
+        <div class="module-band" id="mod6">
+            <div class="module-band__inner">
+                <div class="module-band__num mono">MOD_06</div>
+                <h2 class="module-band__title">Principios de Ethernet</h2>
+                <p class="module-band__sub">Objetivos 6.1.5 · 6.1.6 · 6.1.7 — páginas 130–134</p>
+            </div>
+        </div>
+
+        <!-- ─────────────── 6.1.5 ─────────────── -->
+        <section class="section" id="s615">
+            <div class="section__inner">
+                <header class="section__head">
+                    <div class="tag mono">6.1.5</div>
+                    <h2>Entramado de la Capa 2</h2>
+                </header>
+
+                <p class="lead">Las corrientes de bits codificadas son un logro extraordinario, pero por sí solas no
+                    bastan para las comunicaciones. El <strong>entramado</strong> es el proceso de encapsulamiento de
+                    Capa 2 que proporciona información esencial que no puede obtenerse solo de los bits.</p>
+
+                <!-- Qué aporta el entramado -->
+                <div class="grid-4 reveal">
+                    <div class="info-card neon-border">
+                        <div class="info-card__icon">👥</div>
+                        <h3>Identificación</h3>
+                        <p>Indica cuáles computadores se están comunicando entre sí mediante direcciones MAC.</p>
+                    </div>
+                    <div class="info-card neon-border">
+                        <div class="info-card__icon">⏱️</div>
+                        <h3>Temporización</h3>
+                        <p>Señala cuándo comienza y cuándo termina la comunicación entre dispositivos.</p>
+                    </div>
+                    <div class="info-card neon-border">
+                        <div class="info-card__icon">🔍</div>
+                        <h3>Detección de errores</h3>
+                        <p>Proporciona un método para detectar errores producidos durante la transmisión (FCS).</p>
+                    </div>
+                    <div class="info-card neon-border">
+                        <div class="info-card__icon">🎙️</div>
+                        <h3>Control de turno</h3>
+                        <p>Define quién tiene el turno de "hablar" en la conversación entre computadores.</p>
+                    </div>
+                </div>
+
+                <!-- Diagrama de formato de trama genérica -->
+                <h3 class="sub-h3 reveal">Campos de una trama genérica</h3>
+                <div class="frame-diagram reveal">
+                    <div class="frame-diagram__scroll">
+                        <div class="fd-field fd-field--sync">
+                            <div class="fd-field__label">Campo inicio de trama</div>
+                            <div class="fd-field__desc">Secuencia de bytes de señalización. Informa a otros que se va a
+                                enviar una trama.</div>
+                        </div>
+                        <div class="fd-field fd-field--addr">
+                            <div class="fd-field__label">Campo de dirección</div>
+                            <div class="fd-field__desc">Nombre del computador origen (MAC) y destino (MAC).</div>
+                        </div>
+                        <div class="fd-field fd-field--type">
+                            <div class="fd-field__label">Campo Longitud/Tipo</div>
+                            <div class="fd-field__desc">Especifica la longitud exacta en bytes o el protocolo de Capa 3
+                                involucrado.</div>
+                        </div>
+                        <div class="fd-field fd-field--data">
+                            <div class="fd-field__label">Campo de datos</div>
+                            <div class="fd-field__desc">Datos de las capas superiores + bytes de relleno para longitud
+                                mínima + bytes LLC.</div>
+                        </div>
+                        <div class="fd-field fd-field--fcs">
+                            <div class="fd-field__label">Campo FCS</div>
+                            <div class="fd-field__desc">Secuencia de verificación de trama. Número calculado para
+                                detectar errores.</div>
+                        </div>
+                    </div>
+                    <div class="fd-legend">
+                        <span class="fd-legend__item fd-legend__item--sync">Sincronización</span>
+                        <span class="fd-legend__item fd-legend__item--addr">Direccionamiento</span>
+                        <span class="fd-legend__item fd-legend__item--type">Control</span>
+                        <span class="fd-legend__item fd-legend__item--data">Datos</span>
+                        <span class="fd-legend__item fd-legend__item--fcs">Verificación</span>
+                    </div>
+                </div>
+
+                <!-- FCS métodos -->
+                <h3 class="sub-h3 reveal">Métodos de cálculo del FCS</h3>
+                <div class="methods-grid reveal">
+                    <div class="method-card">
+                        <div class="method-card__name mono">CRC</div>
+                        <div class="method-card__full">Verificación por Redundancia Cíclica</div>
+                        <p>Realiza cálculos matemáticos sobre los datos para generar un valor de comprobación.</p>
+                    </div>
+                    <div class="method-card">
+                        <div class="method-card__name mono">PARIDAD 2D</div>
+                        <div class="method-card__full">Paridad Bidimensional</div>
+                        <p>Coloca bytes en un arreglo 2D y realiza chequeos verticales y horizontales, creando un byte
+                            extra.</p>
+                    </div>
+                    <div class="method-card">
+                        <div class="method-card__name mono">CHECKSUM</div>
+                        <div class="method-card__full">Suma de verificación de Internet</div>
+                        <p>Agrega los valores de todos los bits de datos para obtener una suma de comprobación.</p>
+                    </div>
+                </div>
+
+                <div class="callout callout--info reveal">
+                    <span class="callout__icon">💡</span>
+                    <p>Una <strong>trama</strong> es la unidad de datos del protocolo de Capa 2. Los diagramas de
+                        formato de trama se leen de izquierda a derecha, como un osciloscopio, y muestran campos que
+                        ejecutan funciones específicas.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─────────────── 6.1.6 ─────────────── -->
+        <section class="section section--alt" id="s616">
+            <div class="section__inner">
+                <header class="section__head">
+                    <div class="tag mono">6.1.6</div>
+                    <h2>Estructura de la trama de Ethernet</h2>
+                </header>
+
+                <p class="lead">En la capa de enlace de datos, la estructura de la trama es <strong>casi
+                        idéntica</strong> para todas las velocidades de Ethernet (10 Mbps a 10 000 Mbps). En la capa
+                    física, en cambio, cada versión tiene un conjunto distinto de reglas arquitectónicas.</p>
+
+                <!-- Evolución DIX → IEEE 802.3 -->
+                <h3 class="sub-h3 reveal">Evolución: DIX → IEEE 802.3</h3>
+                <div class="evolution-timeline reveal">
+                    <div class="evo-step">
+                        <div class="evo-step__label mono">Ethernet II (DIX)</div>
+                        <div class="evo-step__content">
+                            <p>Preámbulo y SFD combinados en un solo campo. El campo <code>Longitud/Tipo</code> aparecía
+                                solo como <em>Tipo</em>. El valor hexadecimal determinaba el protocolo de capa superior.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="evo-arrow">→</div>
+                    <div class="evo-step">
+                        <div class="evo-step__label mono">IEEE 802.3 temprano</div>
+                        <div class="evo-step__content">
+                            <p>Preámbulo y SFD como campos separados. El campo se denominaba solo <em>Longitud</em> en
+                                versiones iniciales.</p>
+                        </div>
+                    </div>
+                    <div class="evo-arrow">→</div>
+                    <div class="evo-step evo-step--current">
+                        <div class="evo-step__label mono">IEEE 802.3 actual</div>
+                        <div class="evo-step__content">
+                            <p>Campo <strong>Longitud/Tipo</strong> unificado. Si el valor ≥ <code>0x0600</code> (1536
+                                decimal), el campo indica el protocolo; si es menor, indica longitud.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regla Longitud/Tipo -->
+                <div class="rule-box reveal">
+                    <div class="rule-box__title mono">REGLA LONGITUD/TIPO</div>
+                    <div class="rule-box__grid">
+                        <div class="rule-box__case">
+                            <div class="rule-box__val neon">≥ 0x0600</div>
+                            <div class="rule-box__meaning">Indica protocolo de Capa 3 (ej. IPv4 = 0x0800)</div>
+                        </div>
+                        <div class="rule-box__divider"></div>
+                        <div class="rule-box__case">
+                            <div class="rule-box__val" style="color:var(--cyan)">
+                                < 0x0600</div>
+                                    <div class="rule-box__meaning">Indica longitud del campo de datos en bytes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout callout--warning reveal">
+                        <span class="callout__icon">⚠️</span>
+                        <p>El nodo receptor debe examinar el campo Longitud/Tipo de cada trama entrante para determinar
+                            cuál protocolo de capa superior está presente y cómo procesar los datos.</p>
+                    </div>
+                </div>
+        </section>
+
+        <!-- ─────────────── 6.1.7 ─────────────── -->
+        <section class="section" id="s617">
+            <div class="section__inner">
+                <header class="section__head">
+                    <div class="tag mono">6.1.7</div>
+                    <h2>Campos de la trama IEEE 802.3</h2>
+                </header>
+
+                <p class="lead">La trama Ethernet 802.3 está compuesta por <strong>8 campos</strong> bien definidos,
+                    cada uno con una función específica en el proceso de comunicación.</p>
+
+                <!-- Trama visual interactiva -->
+                <div class="frame-visual reveal" id="frame-visual">
+                    <div class="fv-title mono">TRAMA IEEE 802.3 — clic en cada campo para más detalle</div>
+                    <div class="fv-fields">
+                        <div class="fv-field fv-field--pre" data-id="pre" tabindex="0">Preámbulo<br><span
+                                class="fv-size">7 bytes</span></div>
+                        <div class="fv-field fv-field--sfd" data-id="sfd" tabindex="0">SFD<br><span class="fv-size">1
+                                byte</span></div>
+                        <div class="fv-field fv-field--dst" data-id="dst" tabindex="0">Dir. Destino<br><span
+                                class="fv-size">6 bytes</span></div>
+                        <div class="fv-field fv-field--src" data-id="src" tabindex="0">Dir. Origen<br><span
+                                class="fv-size">6 bytes</span></div>
+                        <div class="fv-field fv-field--len" data-id="len" tabindex="0">Long./Tipo<br><span
+                                class="fv-size">2 bytes</span></div>
+                        <div class="fv-field fv-field--data" data-id="data" tabindex="0">Datos + Relleno<br><span
+                                class="fv-size">46–1500 B</span></div>
+                        <div class="fv-field fv-field--fcs" data-id="fcs" tabindex="0">FCS<br><span class="fv-size">4
+                                bytes</span></div>
+                        <div class="fv-field fv-field--ext" data-id="ext" tabindex="0">Extensión<br><span
+                                class="fv-size">variable</span></div>
+                    </div>
+                    <div class="fv-panel" id="fv-panel">
+                        <div class="fv-panel__inner" id="fv-panel-content">
+                            <p class="fv-panel__hint">← Haz clic en un campo para ver su descripción</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de campos detallada -->
+                <h3 class="sub-h3 reveal">Detalle de cada campo</h3>
+                <div class="fields-table reveal">
+                    <div class="ft-row ft-row--header">
+                        <div class="ft-col ft-col--field">Campo</div>
+                        <div class="ft-col ft-col--size">Tamaño</div>
+                        <div class="ft-col ft-col--desc">Descripción</div>
+                    </div>
+                    <div class="ft-row">
+                        <div class="ft-col ft-col--field mono neon">Preámbulo</div>
+                        <div class="ft-col ft-col--size mono">7 bytes</div>
+                        <div class="ft-col ft-col--desc">Patrón alternado de 1s y 0s para sincronización de tiempos.
+                            Retenido por compatibilidad en versiones más veloces.</div>
+                    </div>
+                    <div class="ft-row">
+                        <div class="ft-col ft-col--field mono neon">SFD</div>
+                        <div class="ft-col ft-col--size mono">1 byte</div>
+                        <div class="ft-col ft-col--desc">Delimitador de Inicio de Trama. Marca el final de la
+                            información de temporización. Patrón: <code>10101011</code>.</div>
+                    </div>
+                    <div class="ft-row">
+                        <div class="ft-col ft-col--field mono neon">Dir. Destino</div>
+                        <div class="ft-col ft-col--size mono">6 bytes</div>
+                        <div class="ft-col ft-col--desc">Dirección MAC destino. Puede ser <em>unicast</em>,
+                            <em>multicast</em> o <em>broadcast</em> (FF:FF:FF:FF:FF:FF).</div>
+                    </div>
+                    <div class="ft-row">
+                        <div class="ft-col ft-col--field mono neon">Dir. Origen</div>
+                        <div class="ft-col ft-col--size mono">6 bytes</div>
+                        <div class="ft-col ft-col--desc">Dirección MAC origen. Generalmente unicast del nodo transmisor.
+                            Algunos protocolos virtuales comparten una MAC origen.</div>
+                    </div>
+                    <div class="ft-row">
+                        <div class="ft-col ft-col--field mono neon">Longitud/Tipo</div>
+                        <div class="ft-col ft-col--size mono">2 bytes</div>
+                        <div class="ft-col ft-col--desc">Si ≥ 0x0600: tipo de protocolo de Capa 3. Si < 0x0600: longitud
+                                en bytes del campo de datos.</div>
+                        </div>
+                        <div class="ft-row">
+                            <div class="ft-col ft-col--field mono neon">Datos + Relleno</div>
+                            <div class="ft-col ft-col--size mono">46–1500 B</div>
+                            <div class="ft-col ft-col--desc">Datos de capa superior (paquete IP) + bytes LLC + relleno
+                                para cumplir la longitud mínima de trama.</div>
+                        </div>
+                        <div class="ft-row">
+                            <div class="ft-col ft-col--field mono neon">FCS</div>
+                            <div class="ft-col ft-col--size mono">4 bytes</div>
+                            <div class="ft-col ft-col--desc">Secuencia de verificación de trama (CRC-32). Si el FCS
+                                calculado en destino ≠ FCS recibido → trama descartada.</div>
+                        </div>
+                        <div class="ft-row">
+                            <div class="ft-col ft-col--field mono neon">Extensión</div>
+                            <div class="ft-col ft-col--size mono">variable</div>
+                            <div class="ft-col ft-col--desc">Campo adicional usado en Gigabit Ethernet para alcanzar la
+                                longitud mínima sin incrementar el relleno de datos.</div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <!-- ╔══════════════════════════════╗ -->
+        <!-- ║   MÓDULO 8 – INTRO BAND      ║ -->
+        <!-- ╚══════════════════════════════╝ -->
+        <div class="module-band module-band--m8" id="mod8">
+            <div class="module-band__inner">
+                <div class="module-band__num mono">MOD_08</div>
+                <h2 class="module-band__title">Conmutación de Ethernet</h2>
+                <p class="module-band__sub">Objetivos 8.1 · 8.2 — páginas 164–175</p>
+            </div>
+        </div>
+
+        <!-- ─────────────── 8.1 ─────────────── -->
+        <section class="section section--alt" id="s81">
+            <div class="section__inner">
+                <header class="section__head">
+                    <div class="tag mono">8.1</div>
+                    <h2>Conmutación de Ethernet</h2>
+                </header>
+
+                <!-- 8.1.1 Puenteo -->
+                <h3 class="sub-h3 reveal">8.1.1 Puenteo de Capa 2</h3>
+                <p class="reveal">El puenteo se desarrolló para aliviar los problemas de rendimiento causados por el
+                    aumento de colisiones. Un puente divide un segmento grande en dominios de colisión aislados usando
+                    una <strong>tabla de direcciones MAC</strong>.</p>
+
+                <div class="bridge-steps reveal">
+                    <div class="bs-title mono">PROCESO DE OPERACIÓN DEL PUENTE</div>
+                    <div class="bs-flow">
+                        <div class="bs-step">
+                            <div class="bs-step__num">1</div>
+                            <div class="bs-step__text">Tabla vacía al encender. El puente espera y detecta tráfico.
+                            </div>
+                        </div>
+                        <div class="bs-arrow">↓</div>
+                        <div class="bs-step">
+                            <div class="bs-step__num">2</div>
+                            <div class="bs-step__text">Al recibir una trama, registra la <strong>dirección
+                                    origen</strong> y el puerto en la tabla de puenteo.</div>
+                        </div>
+                        <div class="bs-arrow">↓</div>
+                        <div class="bs-step">
+                            <div class="bs-step__num">3</div>
+                            <div class="bs-step__text">Compara la <strong>dirección destino</strong> con la tabla. Si no
+                                está → reenvía al otro segmento.</div>
+                        </div>
+                        <div class="bs-arrow">↓</div>
+                        <div class="bs-step">
+                            <div class="bs-step__num">4</div>
+                            <div class="bs-step__text">Si la dirección destino está en la tabla y es el mismo puerto de
+                                entrada → <strong>descarta</strong> la trama (no la reenvía).</div>
+                        </div>
+                        <div class="bs-arrow">↓</div>
+                        <div class="bs-step bs-step--end">
+                            <div class="bs-step__num">✓</div>
+                            <div class="bs-step__text">Con el tiempo la tabla se completa y el tráfico se filtra
+                                eficientemente entre dominios.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8.1.2 Switch -->
+                <h3 class="sub-h3 reveal">8.1.2 Conmutación a nivel de Capa 2 (Switch)</h3>
+                <div class="two-col reveal">
+                    <div class="two-col__text">
+                        <p>Un switch es un <strong>puente multipuerto rápido</strong> que puede contener docenas de
+                            puertos. Cada puerto crea su propio dominio de colisión. El switch mantiene dinámicamente
+                            una tabla <strong>CAM</strong> (Content Addressable Memory) con toda la información MAC
+                            necesaria.</p>
+                        <ul class="feat-list">
+                            <li>En una red de 20 nodos → 20 dominios de colisión independientes.</li>
+                            <li>Usa <strong>ASIC</strong> para tomar decisiones a velocidades de hardware.</li>
+                            <li>La memoria CAM devuelve la dirección del puerto sin algoritmos de búsqueda.</li>
+                            <li>Soporta <strong>full duplex</strong>: duplica el ancho de banda teórico.</li>
+                        </ul>
+                    </div>
+                    <div class="two-col__visual">
+                        <div class="switch-diagram">
+                            <div class="sw-device">SWITCH<br><span class="mono" style="font-size:.7rem">TABLA CAM</span>
+                            </div>
+                            <div class="sw-ports">
+                                <div class="sw-port">
+                                    <div class="sw-port__line"></div>
+                                    <div class="sw-port__host">H1</div>
+                                </div>
+                                <div class="sw-port">
+                                    <div class="sw-port__line"></div>
+                                    <div class="sw-port__host">H2</div>
+                                </div>
+                                <div class="sw-port">
+                                    <div class="sw-port__line"></div>
+                                    <div class="sw-port__host">H3</div>
+                                </div>
+                                <div class="sw-port">
+                                    <div class="sw-port__line"></div>
+                                    <div class="sw-port__host">H4</div>
+                                </div>
+                            </div>
+                            <div class="sw-label mono">Cada puerto = 1 dominio de colisión</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8.1.4 Latencia -->
+                <h3 class="sub-h3 reveal">8.1.4 Latencia en switches</h3>
+                <div class="latency-grid reveal">
+                    <div class="lat-card">
+                        <div class="lat-card__icon">📡</div>
+                        <h4>Retardo de medios</h4>
+                        <p>Velocidad limitada a la que las señales viajan por los medios físicos.</p>
+                    </div>
+                    <div class="lat-card">
+                        <div class="lat-card__icon">⚡</div>
+                        <h4>Retardo de circuito</h4>
+                        <p>Sistemas electrónicos que procesan la señal a lo largo de la ruta.</p>
+                    </div>
+                    <div class="lat-card">
+                        <div class="lat-card__icon">💻</div>
+                        <h4>Retardo de software</h4>
+                        <p>Decisiones de software necesarias para implementar conmutación y protocolos.</p>
+                    </div>
+                    <div class="lat-card">
+                        <div class="lat-card__icon">📦</div>
+                        <h4>Retardo de contenido</h4>
+                        <p>El dispositivo no puede enrutar hasta que haya leído la dirección MAC destino de la trama.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 8.1.5 Modos de conmutación -->
+                <h3 class="sub-h3 reveal">8.1.5 Modos de conmutación</h3>
+                <div class="modes-compare reveal">
+                    <div class="mode-card mode-card--cut">
+                        <div class="mode-card__label mono">CORTE (Cut-Through)</div>
+                        <div class="mode-card__latency">⚡ Latencia BAJA</div>
+                        <ul>
+                            <li>Empieza a reenviar en cuanto lee la MAC destino.</li>
+                            <li>No verifica errores (FCS).</li>
+                            <li>Requiere misma velocidad en ambos puertos (síncrona).</li>
+                        </ul>
+                    </div>
+                    <div class="mode-card mode-card--store">
+                        <div class="mode-card__label mono">ALMACENAMIENTO Y ENVÍO (Store &amp; Forward)</div>
+                        <div class="mode-card__latency">🛡️ Confiabilidad ALTA</div>
+                        <ul>
+                            <li>Recibe la trama completa antes de reenviar.</li>
+                            <li>Verifica el FCS; descarta tramas con error.</li>
+                            <li>Permite conmutación asíncrona (velocidades distintas).</li>
+                        </ul>
+                    </div>
+                    <div class="mode-card mode-card--free">
+                        <div class="mode-card__label mono">LIBRE DE FRAGMENTOS</div>
+                        <div class="mode-card__latency">⚖️ Modo INTERMEDIO</div>
+                        <ul>
+                            <li>Lee los primeros 64 bytes (encabezado).</li>
+                            <li>Verifica direccionamiento y control LLC.</li>
+                            <li>Más confiable que corte, más rápido que S&amp;F.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 8.1.6 STP -->
+                <h3 class="sub-h3 reveal">8.1.6 Protocolo Spanning Tree (STP)</h3>
+                <p class="reveal">Las redes con rutas redundantes pueden generar <strong>bucles de conmutación</strong>
+                    que provocan <em>tormentas de broadcast</em>. El STP resuelve esto eligiendo un puente raíz y
+                    desactivando rutas redundantes.</p>
+
+                <div class="stp-states reveal">
+                    <div class="stp-title mono">ESTADOS DE UN PUERTO STP</div>
+                    <div class="stp-flow">
+                        <div class="stp-state stp-state--block">BLOQUEAR</div>
+                        <div class="stp-arrow">→</div>
+                        <div class="stp-state stp-state--listen">ESCUCHAR</div>
+                        <div class="stp-arrow">→</div>
+                        <div class="stp-state stp-state--learn">APRENDER</div>
+                        <div class="stp-arrow">→</div>
+                        <div class="stp-state stp-state--fwd">ENVIAR</div>
+                    </div>
+                    <div class="stp-note mono">Cualquier estado puede pasar a DESACTIVADO</div>
+                    <p style="margin-top:1rem;font-size:.9rem;color:var(--text-dim)">Cada switch envía mensajes
+                        <strong>BPDU</strong> (Bridge Protocol Data Unit) desde todos sus puertos. El algoritmo STA
+                        elige el puente raíz y elimina bucles lógicos manteniendo disponibles las rutas alternativas.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─────────────── 8.2 ─────────────── -->
+        <section class="section" id="s82">
+            <div class="section__inner">
+                <header class="section__head">
+                    <div class="tag mono">8.2</div>
+                    <h2>Dominios de colisión y de broadcast</h2>
+                </header>
+
+                <!-- 8.2.1 Medios compartidos -->
+                <h3 class="sub-h3 reveal">8.2.1 Entorno de medios compartidos</h3>
+                <div class="shared-media reveal">
+                    <div class="sm-card">
+                        <div class="sm-card__label mono">COMPARTIDO</div>
+                        <p>Varios hosts acceden al mismo medio físico (mismo cable, misma fibra). Todos compiten por el
+                            ancho de banda.</p>
+                    </div>
+                    <div class="sm-card">
+                        <div class="sm-card__label mono">EXT. COMPARTIDO</div>
+                        <p>Dispositivos de red amplían el medio para incluir accesos múltiples o mayores distancias (con
+                            hubs/repetidores).</p>
+                    </div>
+                    <div class="sm-card">
+                        <div class="sm-card__label mono">PUNTO A PUNTO</div>
+                        <p>Un dispositivo se conecta solo a otro dispositivo. Común en conexiones de acceso telefónico e
+                            Internet hogareña.</p>
+                    </div>
+                </div>
+
+                <!-- 8.2.2 Dominios de colisión -->
+                <h3 class="sub-h3 reveal">8.2.2 Dominios de colisión</h3>
+                <p class="reveal">Un <strong>dominio de colisión</strong> es el segmento de red física donde pueden
+                    ocurrir colisiones. Cada colisión detiene todas las transmisiones durante un período determinado por
+                    el algoritmo de postergación.</p>
+
+                <div class="layer-impact reveal">
+                    <div class="li-title mono">IMPACTO POR CAPA OSI EN DOMINIOS DE COLISIÓN</div>
+                    <div class="li-rows">
+                        <div class="li-row">
+                            <div class="li-row__layer neon">Capa 1</div>
+                            <div class="li-row__devices">Hub · Repetidor</div>
+                            <div class="li-row__effect li-row__effect--bad">EXTIENDE el dominio de colisión</div>
+                            <div class="li-row__note">Transmiten todo sin filtrar. Más hosts = más colisiones.</div>
+                        </div>
+                        <div class="li-row">
+                            <div class="li-row__layer" style="color:var(--cyan)">Capa 2</div>
+                            <div class="li-row__devices">Switch · Puente</div>
+                            <div class="li-row__effect li-row__effect--good">DIVIDE el dominio de colisión</div>
+                            <div class="li-row__note">Filtra por MAC. Crea microsegmentos. NO divide broadcast.</div>
+                        </div>
+                        <div class="li-row">
+                            <div class="li-row__layer" style="color:var(--green)">Capa 3</div>
+                            <div class="li-row__devices">Router</div>
+                            <div class="li-row__effect li-row__effect--best">DIVIDE colisión Y broadcast</div>
+                            <div class="li-row__note">Filtra por IP. Crea dominios de broadcast independientes.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regla 5-4-3-2-1 -->
+                <div class="rule-5431 reveal">
+                    <div class="rule-5431__title mono">REGLA 5-4-3-2-1</div>
+                    <div class="rule-5431__items">
+                        <div class="r5431-item"><span class="r5431-num">5</span><span class="r5431-desc">Segmentos de
+                                medios de red</span></div>
+                        <div class="r5431-item"><span class="r5431-num">4</span><span class="r5431-desc">Repetidores o
+                                hubs</span></div>
+                        <div class="r5431-item"><span class="r5431-num">3</span><span class="r5431-desc">Segmentos de
+                                host de red</span></div>
+                        <div class="r5431-item"><span class="r5431-num">2</span><span class="r5431-desc">Secciones de
+                                enlace (sin hosts)</span></div>
+                        <div class="r5431-item"><span class="r5431-num">1</span><span class="r5431-desc">Dominio de
+                                colisión grande</span></div>
+                    </div>
+                    <p class="rule-5431__note">Esta regla mantiene el tiempo de retardo de ida y vuelta dentro de
+                        límites aceptables para 10BASE-T. Excederla causa colisiones tardías (después del byte 64) que
+                        los chips NIC no retransmiten automáticamente.</p>
+                </div>
+
+                <!-- 8.2.4 Broadcasts -->
+                <h3 class="sub-h3 reveal">8.2.4 Broadcasts de Capa 2</h3>
+                <p class="reveal">Cuando un nodo necesita comunicarse con todos los hosts de la red, envía una trama de
+                    <strong>broadcast</strong> con dirección MAC destino <code class="mac">FF:FF:FF:FF:FF:FF</code>.
+                    Cada NIC de la red debe procesar estas tramas.</p>
+
+                <div class="broadcast-sources reveal">
+                    <div class="bcast-title mono">FUENTES DE BROADCAST Y MULTICAST EN REDES IP</div>
+                    <div class="bcast-grid">
+                        <div class="bcast-card">
+                            <div class="bcast-card__src">Estaciones de trabajo</div>
+                            <p>Envían ARP broadcast cada vez que necesitan una MAC no registrada. ~0,007 ARP/seg por
+                                estación. 2000 estaciones → ~14 ARP/seg.</p>
+                            <div class="bcast-card__stat neon">≈ 14 ARP/seg<br><span
+                                    style="font-size:.75rem;color:var(--text-dim)">con 2000 hosts</span></div>
+                        </div>
+                        <div class="bcast-card">
+                            <div class="bcast-card__src">Routers con RIP</div>
+                            <p>RIPv1 retransmite toda la tabla de enrutamiento cada 30 seg. 10 routers con tabla de 50
+                                paquetes = ~16 broadcasts/seg.</p>
+                            <div class="bcast-card__stat" style="color:var(--cyan)">≈ 16 B/seg<br><span
+                                    style="font-size:.75rem;color:var(--text-dim)">con 10 routers RIP</span></div>
+                        </div>
+                        <div class="bcast-card">
+                            <div class="bcast-card__src">Aplicaciones multicast</div>
+                            <p>Una sola app de video puede generar 7 MB/s de datos multicast enviados a <em>todos</em>
+                                los segmentos de la red conmutada plana.</p>
+                            <div class="bcast-card__stat" style="color:var(--amber)">7 MB/seg<br><span
+                                    style="font-size:.75rem;color:var(--text-dim)">por app de video</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout callout--danger reveal">
+                    <span class="callout__icon">🚨</span>
+                    <div>
+                        <strong>Tormenta de broadcast:</strong> cuando la radiación de broadcast satura la red, no queda
+                        ancho de banda para datos de aplicaciones. Se han observado picos de miles de
+                        broadcasts/segundo. La degradación del sistema es mensurable desde tan solo <strong>100
+                            broadcasts/segundo</strong>.
+                    </div>
+                </div>
+
+                <!-- 8.2.5 Dominios de broadcast -->
+                <h3 class="sub-h3 reveal">8.2.5 Dominios de broadcast</h3>
+                <p class="reveal">Un <strong>dominio de broadcast</strong> es un grupo de dominios de colisión
+                    conectados por dispositivos de Capa 2. Solo los dispositivos de Capa 3 (routers) pueden segmentar
+                    dominios de broadcast.</p>
+
+                <div class="broadcast-domain-visual reveal">
+                    <div class="bdv-title mono">CONTROL DE DOMINIOS SEGÚN DISPOSITIVO</div>
+                    <div class="bdv-grid">
+                        <div class="bdv-item bdv-item--l1">
+                            <div class="bdv-layer">L1</div>
+                            <div class="bdv-device">HUB</div>
+                            <div class="bdv-col-domain" style="background:var(--red-dim)">1 dominio colisión</div>
+                            <div class="bdv-bc-domain" style="background:var(--red-dim)">1 dominio broadcast</div>
+                        </div>
+                        <div class="bdv-item bdv-item--l2">
+                            <div class="bdv-layer">L2</div>
+                            <div class="bdv-device">SWITCH</div>
+                            <div class="bdv-col-domain" style="background:var(--neon-dim)">N dominios colisión</div>
+                            <div class="bdv-bc-domain" style="background:var(--red-dim)">1 dominio broadcast</div>
+                        </div>
+                        <div class="bdv-item bdv-item--l3">
+                            <div class="bdv-layer">L3</div>
+                            <div class="bdv-device">ROUTER</div>
+                            <div class="bdv-col-domain" style="background:var(--neon-dim)">N dominios colisión</div>
+                            <div class="bdv-bc-domain" style="background:var(--green-dim)">N dominios broadcast</div>
+                        </div>
+                    </div>
+                    <div class="bdv-legend">
+                        <span style="color:var(--red)">■</span> Sin segmentar &nbsp;
+                        <span style="color:var(--neon)">■</span> Segmentado (colisión) &nbsp;
+                        <span style="color:var(--green)">■</span> Segmentado (broadcast)
+                    </div>
+                </div>
+
+                <!-- 8.2.6 Flujo de datos -->
+                <h3 class="sub-h3 reveal">8.2.6 Flujo de datos</h3>
+                <div class="data-flow reveal">
+                    <div class="df-rule">
+                        <div class="df-rule__layer neon mono">CAPA 1</div>
+                        <div class="df-rule__content">
+                            <strong>SIEMPRE reenvía.</strong> No filtra. Todo lo que recibe se retransmite al siguiente
+                            segmento. Regenera y retemporiza la señal. Pertenece al mismo dominio de colisión y
+                            broadcast.
+                        </div>
+                    </div>
+                    <div class="df-rule">
+                        <div class="df-rule__layer" style="color:var(--cyan)">CAPA 2</div>
+                        <div class="df-rule__content">
+                            <strong>DESEA reenviar</strong> (a menos que algo lo impida). Filtra por MAC. No reenvía
+                            solo cuando origen y destino están en el mismo dominio de colisión. Divide colisión,
+                            mantiene broadcast.
+                        </div>
+                    </div>
+                    <div class="df-rule">
+                        <div class="df-rule__layer" style="color:var(--green)">CAPA 3</div>
+                        <div class="df-rule__content">
+                            <strong>NO reenvía</strong> a menos que sea obligado. Filtra por IP. Solo reenvía si el
+                            destino está fuera del dominio broadcast y existe una ruta en la tabla de enrutamiento.
+                            Divide colisión y broadcast.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ░░░ GLOSARIO ░░░ -->
+        <section class="section section--alt" id="glosario">
+            <div class="section__inner">
+                <header class="section__head">
+                    <div class="tag mono">REF</div>
+                    <h2>Glosario de términos</h2>
+                </header>
+                <div class="glossary reveal">
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>802.3</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Estándar IEEE que define la especificación de Ethernet a nivel de Capa 1 y Capa 2
+                                    del modelo OSI.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>ARP</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Protocolo de Resolución de Direcciones. Traduce direcciones IP a direcciones MAC
+                                    mediante broadcasts.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>ASIC</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Circuito Integrado de Aplicación Específica. Realiza funciones de conmutación a
+                                    velocidades de hardware.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>BPDU</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Bridge Protocol Data Unit. Mensajes que los switches intercambian para elegir el
+                                    puente raíz en STP.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>CAM</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Content Addressable Memory. Memoria que dado un dato devuelve la dirección asociada,
+                                    sin algoritmos de búsqueda.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>CRC</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Verificación por Redundancia Cíclica. Método principal para calcular el FCS en
+                                    tramas Ethernet.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>Dominio de broadcast</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Grupo de dominios de colisión conectados por Capa 2. Solo los routers (Capa 3) lo
+                                    segmentan.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>Dominio de colisión</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Segmento de red donde dos dispositivos pueden generar una colisión al transmitir
+                                    simultáneamente.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>Entramado</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Proceso de encapsulamiento de Capa 2 que permite identificar dispositivos, detectar
+                                    errores y controlar el turno.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>FCS</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Frame Check Sequence. Campo de 4 bytes al final de la trama que contiene un CRC-32
+                                    para detección de errores.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>Full duplex</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Modo de comunicación que permite transmitir y recibir simultáneamente, eliminando
+                                    colisiones y duplicando el ancho de banda teórico.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>LLC</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Logical Link Control. Subcapa superior de Capa 2 que agrega información de control
+                                    para entregar paquetes al nodo destino.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>MAC</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Media Access Control. Dirección física de 48 bits grabada en la NIC, expresada como
+                                    12 dígitos hexadecimales. Los primeros 6 identifican al fabricante (OUI).</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>Microsegmento</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Segmento físico pequeño con solo dos nodos: el puerto del switch y el host
+                                    conectado. Permite full duplex.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>OUI</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Identificador Exclusivo Organizacional. Primeros 6 dígitos hexadecimales de la MAC,
+                                    administrados por IEEE.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>SFD</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Start Frame Delimiter. Campo de 1 byte (10101011) que marca el fin del preámbulo e
+                                    inicio de la trama real.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>STP</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Spanning Tree Protocol. Protocolo que elimina bucles de conmutación eligiendo un
+                                    puente raíz y desactivando rutas redundantes.</dd>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gl-item">
+                        <div class="gl-inner">
+                            <div class="gl-front">
+                                <dt>Tormenta de broadcast</dt>
+                            </div>
+                            <div class="gl-back">
+                                <dd>Saturación de la red por exceso de broadcasts. La degradación es mensurable desde
+                                    100 broadcasts/segundo.</dd>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ░░░ FOOTER ░░░ -->
+    <footer class="footer">
+        <div class="footer__inner">
+            <div class="footer__logo mono">CISCO / ETH 802.3</div>
+            <p>CCNA 1-2 · Módulo 6 (obj. 6.1.5–6.1.7) · Módulo 8 (obj. 8.1–8.2)</p>
+            <p class="footer__src mono">Por Pamela Ruíz Velasco | TIN | 6to Cuatrimestre</p>
+            <a href="#top" class="back-top">↑ INICIO</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
